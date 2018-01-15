@@ -23,13 +23,16 @@ namespace Microsoft.AspNetCore.Razor.Tools
         public DiscoverCommand(Application parent)
             : base(parent, "discover")
         {
-            TagHelperManifest = Option("-o", "output file", CommandOptionType.SingleValue);
             Assemblies = Argument("assemblies", "assemblies to search for tag helpers", multipleValues: true);
+            TagHelperManifest = Option("-o", "output file", CommandOptionType.SingleValue);
+            ProjectDirectory = Option("-p", "project root directory", CommandOptionType.SingleValue);
         }
 
         public CommandArgument Assemblies { get; }
 
         public CommandOption TagHelperManifest { get; }
+
+        public CommandOption ProjectDirectory { get; }
 
         protected override bool ValidateArguments()
         {
@@ -51,13 +54,16 @@ namespace Microsoft.AspNetCore.Razor.Tools
         protected override Task<int> ExecuteCoreAsync()
         {
             var result = ExecuteCore(
+                projectDirectory: ProjectDirectory.Value() ?? Environment.CurrentDirectory,
                 outputFilePath: TagHelperManifest.Value(),
                 assemblies: Assemblies.Values.ToArray());
             return Task.FromResult(result);
         }
 
-        private int ExecuteCore(string outputFilePath, string[] assemblies)
+        private int ExecuteCore(string projectDirectory, string outputFilePath, string[] assemblies)
         {
+            outputFilePath = Path.Combine(projectDirectory, outputFilePath);
+
             var metadataReferences = new MetadataReference[assemblies.Length];
             for (var i = 0; i < assemblies.Length; i++)
             {

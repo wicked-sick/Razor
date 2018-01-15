@@ -51,6 +51,7 @@
     -->
     <RazorCompileOnBuild Condition="'$(RazorCompileOnBuild)'==''">false</RazorCompileOnBuild>
     <RazorCompileOnPublish Condition="'$(RazorCompileOnPublish)'==''">true</RazorCompileOnPublish>
+    <UseRazorBuildServer Condition="'$(UseRazorBuildServer)'==''">false</UseRazorBuildServer>
 
     <!-- Output directory used for generated files -->
     <RazorGenerateOutputPath Condition="'$(RazorGenerateOutputPath)'==''">$(IntermediateOutputPath)Razor\</RazorGenerateOutputPath>
