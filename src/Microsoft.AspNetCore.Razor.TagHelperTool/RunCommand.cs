@@ -32,7 +32,7 @@ namespace Microsoft.AspNetCore.Razor.TagHelperTool
             }
 
             return ExecuteCore(
-                projectDirectory: application.ProjectRoot.Value() ?? Environment.CurrentDirectory,
+                projectDirectory: application.ProjectRoot.Value(),
                 outputFilePath: application.TagHelperManifest.Value(),
                 assemblies: application.Assemblies.Values.ToArray());
         }
@@ -148,6 +148,11 @@ namespace Microsoft.AspNetCore.Razor.TagHelperTool
             {
                 application.Error.WriteLine($"{application.Assemblies.Name} should have at least one value.");
                 return false;
+            }
+
+            if (string.IsNullOrEmpty(application.ProjectRoot.Value()))
+            {
+                application.ProjectRoot.Values.Add(Environment.CurrentDirectory);
             }
 
             return true;

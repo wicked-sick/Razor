@@ -15,6 +15,7 @@
     <!-- Used to locate our tools -->
     <_RazorGenerateToolAssembly>$(_RazorMSBuildRoot)tools\Microsoft.AspNetCore.Razor.GenerateTool.dll</_RazorGenerateToolAssembly>
     <_RazorTagHelperToolAssembly>$(_RazorMSBuildRoot)tools\Microsoft.AspNetCore.Razor.TagHelperTool.dll</_RazorTagHelperToolAssembly>
+    <_RazorBuildServerAssembly>$(_RazorMSBuildRoot)tools\rzc.dll</_RazorBuildServerAssembly>
 
     <!-- Used to hash file inputs for RazorGenerate -->
     <_RazorGenerateInputsHash></_RazorGenerateInputsHash>

@@ -67,7 +67,6 @@ namespace Microsoft.CodeAnalysis.CommandLine
             List<string> arguments,
             BuildPathsAlt buildPaths,
             string keepAlive,
-            string libEnvVariable,
             CancellationToken cancellationToken)
         {
             var pipeName = PipeName.ComputeDefault();
@@ -78,7 +77,7 @@ namespace Microsoft.CodeAnalysis.CommandLine
                 buildPaths,
                 pipeName: pipeName,
                 keepAlive: keepAlive,
-                libEnvVariable: libEnvVariable,
+                libEnvVariable: null,
                 timeoutOverride: null,
                 tryCreateServerFunc: TryCreateServerCore,
                 cancellationToken: cancellationToken);

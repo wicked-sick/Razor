@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Roslyn.Utilities
 {
+    /*
+     * Copied from https://github.com/dotnet/roslyn/blob/master/src/Compilers/Core/Portable/InternalUtilities/CommandLineUtilities.cs
+     */
     internal static class CommandLineUtilities
     {
         /// <summary>

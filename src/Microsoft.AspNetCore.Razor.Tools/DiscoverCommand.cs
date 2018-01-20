@@ -48,13 +48,18 @@ namespace Microsoft.AspNetCore.Razor.Tools
                 return false;
             }
 
+            if (string.IsNullOrEmpty(ProjectDirectory.Value()))
+            {
+                ProjectDirectory.Values.Add(Environment.CurrentDirectory);
+            }
+
             return true;
         }
 
         protected override Task<int> ExecuteCoreAsync()
         {
             var result = ExecuteCore(
-                projectDirectory: ProjectDirectory.Value() ?? Environment.CurrentDirectory,
+                projectDirectory: ProjectDirectory.Value(),
                 outputFilePath: TagHelperManifest.Value(),
                 assemblies: Assemblies.Values.ToArray());
             return Task.FromResult(result);

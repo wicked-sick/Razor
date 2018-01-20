@@ -27,6 +27,7 @@ namespace Microsoft.AspNetCore.Razor.Tasks
         [Required]
         public string ToolAssembly { get; set; }
 
+        [Required]
         public string ServerAssembly { get; set; }
 
         public bool UseServer { get; set; }
@@ -118,22 +119,23 @@ namespace Microsoft.AspNetCore.Razor.Tasks
                 CompilerServerLogger.Log($"CommandLine = '{commandLineCommands}'");
                 CompilerServerLogger.Log($"BuildResponseFile = '{responseFileCommands}'");
 
+                // The server contains the tools for discovering tag helpers and generating Razor code.
                 var clientDir = Path.GetDirectoryName(ServerAssembly);
-
                 var workingDir = CurrentDirectoryToUse();
+                var tempDir = BuildServerConnection.GetTempPath(workingDir);
+
                 var buildPaths = new BuildPathsAlt(
-                    clientDir: clientDir,
+                    clientDir,
                     // MSBuild doesn't need the .NET SDK directory
                     sdkDir: null,
                     workingDir: workingDir,
-                    tempDir: BuildServerConnection.GetTempPath(workingDir));
+                    tempDir: tempDir);
 
                 var responseTask = BuildServerConnection.RunServerCompilation(
                     Command,
                     GetArguments(responseFileCommands),
                     buildPaths,
                     keepAlive: null,
-                    libEnvVariable: LibDirectoryToUse(),
                     cancellationToken: _razorServerCts.Token);
 
                 responseTask.Wait(_razorServerCts.Token);
@@ -142,9 +144,10 @@ namespace Microsoft.AspNetCore.Razor.Tasks
                 if (response.Type == BuildResponse.ResponseType.Completed &&
                     response is CompletedBuildResponse completedResponse)
                 {
-                    CompilerServerLogger.Log("Server execution completed.");
-
                     result = completedResponse.ReturnCode;
+
+                    CompilerServerLogger.Log($"Server execution completed with return code {result}.");
+
                     return true;
                 }
             }
@@ -168,30 +171,6 @@ namespace Microsoft.AspNetCore.Razor.Tasks
                 workingDirectory = Directory.GetCurrentDirectory();
             }
             return workingDirectory;
-        }
-
-        /// <summary>
-        /// Get the "LIB" environment variable, or NULL if none.
-        /// </summary>
-        private string LibDirectoryToUse()
-        {
-            // First check the real environment.
-            var libDirectory = Environment.GetEnvironmentVariable("LIB");
-
-            // Now go through additional environment variables.
-            var additionalVariables = EnvironmentVariables;
-            if (additionalVariables != null)
-            {
-                foreach (var variable in EnvironmentVariables)
-                {
-                    if (variable.StartsWith("LIB=", StringComparison.OrdinalIgnoreCase))
-                    {
-                        libDirectory = variable.Substring(4);
-                    }
-                }
-            }
-
-            return libDirectory;
         }
 
         private List<string> GetArguments(string responseFileCommands)
